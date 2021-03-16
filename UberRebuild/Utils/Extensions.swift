@@ -179,6 +179,7 @@ extension UIViewController {
     }
     
     
+    
     func shouldPresentLoadingView(_ present: Bool, message: String? = nil) {
         if present {
             let loadingView = UIView()
@@ -198,6 +199,8 @@ extension UIViewController {
             label.textColor = .white
             label.textAlignment = .center
             label.alpha = 0.87
+            
+
         
             
             self.view.addSubview(loadingView)

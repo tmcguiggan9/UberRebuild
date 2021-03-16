@@ -106,16 +106,17 @@ class SignUpController: UIViewController {
             guard let uid = result?.user.uid else { return }
             
             let values = ["email": email, "fullname": fullname, "accountType": accountTypeIndex] as [String : Any]
-
             
-            if accountTypeIndex == 1{
-                let geofire = GeoFire(firebaseRef: REF_DRIVER_LOCATIONS)
-                guard let location = self.location else { return }
-                
-                geofire.setLocation(location, forKey: uid) { (error) in
-                    self.uploadUserDataAndShowHomeController(uid: uid, values: values)
-                }
-            }
+//            if accountTypeIndex == 1{
+//                print("DEBUG: USER has been created")
+//                let geofire = GeoFire(firebaseRef: REF_DRIVER_LOCATIONS)
+//                guard let location = self.location else { return }
+//                
+//                geofire.setLocation(location, forKey: uid) { (error) in
+//                    self.uploadUserDataAndShowHomeController(uid: uid, values: values)
+//                }
+//            }
+
             
             
             self.uploadUserDataAndShowHomeController(uid: uid, values: values)

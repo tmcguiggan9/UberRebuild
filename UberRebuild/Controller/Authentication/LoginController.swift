@@ -10,6 +10,8 @@ import Firebase
 
 class LoginController: UIViewController {
     
+    var user: User?
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "UBER"
@@ -78,6 +80,9 @@ class LoginController: UIViewController {
             self.dismiss(animated: true, completion: nil)
         }
     }
+    
+
+    
     
     @objc func handleShowSignUp() {
         let controller = SignUpController()

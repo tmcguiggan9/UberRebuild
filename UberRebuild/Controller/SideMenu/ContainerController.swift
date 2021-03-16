@@ -19,6 +19,7 @@ class ContainerController: UIViewController {
     
     private var user: User? {
         didSet {
+            print("DEBUG: USER HAS BEEN SET")
             guard let user = user else { return }
             homeController.user = user
             configureMenuController(withUser: user)
@@ -30,9 +31,9 @@ class ContainerController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         checkIfUserIsLoggedIn()
     }
+    
     
     
     @objc func dismissMenu() {
@@ -46,7 +47,9 @@ class ContainerController: UIViewController {
         if Auth.auth().currentUser?.uid == nil {
             DispatchQueue.main.async {
                 let nav = UINavigationController(rootViewController: LoginController())
+                nav.modalPresentationStyle = .fullScreen
                 self.present(nav, animated: true, completion: nil)
+                
             }
         } else {
             configure()

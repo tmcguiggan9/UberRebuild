@@ -15,6 +15,7 @@ class LocationHandler: NSObject, CLLocationManagerDelegate {
     static let shared = LocationHandler()
     var locationManager: CLLocationManager!
     var location: CLLocation?
+ 
     
     override init() {
         super.init()
@@ -24,9 +25,12 @@ class LocationHandler: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        
+        
         if status == .authorizedWhenInUse {
             locationManager.requestAlwaysAuthorization()
         }
     }
     
+ 
 }

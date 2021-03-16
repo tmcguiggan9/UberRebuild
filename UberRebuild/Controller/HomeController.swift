@@ -8,6 +8,7 @@
 import UIKit
 import Firebase
 import MapKit
+import GeoFire
 
 private let reuseIdentifier = "Location Cell"
 private let annotationIdentifier = "DriverAnnotation"
@@ -48,6 +49,10 @@ class HomeController: UIViewController {
     
     weak var delegate: HomeControllerDelegate?
     
+    
+    
+
+    
     var user: User? {
         didSet {
             locationInputView.user = user
@@ -87,9 +92,7 @@ class HomeController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         enableLocationServices()
-        
         configureUI()
-        
        
      //   signOut()
         
@@ -442,10 +445,31 @@ extension HomeController: CLLocationManagerDelegate {
         
     }
     
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        if user?.accountType == .passenger {
+            fetchDrivers()
+        }
+        
+        if locationManager?.authorizationStatus == .authorizedWhenInUse {
+            if user?.accountType == .driver {
+                guard let uid = user?.uid else { return }
+                print("DEBUG: USER has been created")
+                let geofire = GeoFire(firebaseRef: REF_DRIVER_LOCATIONS)
+                guard let location = self.locationManager?.location else { return }
+                
+                geofire.setLocation(location, forKey: uid) { (error) in
+                    if let error = error {
+                        print("DEBUG: LOCATION NOT SUCCESSFULLY UPDATED \(error.localizedDescription)")
+                    }
+                }
+            } 
+        }
+    }
+    
     
     func enableLocationServices() {
         
-        locationManager?.delegate = self
+       locationManager?.delegate = self
         
         switch locationManager?.authorizationStatus {
         case .notDetermined:
@@ -459,6 +483,7 @@ extension HomeController: CLLocationManagerDelegate {
             locationManager?.startUpdatingLocation()
             locationManager?.desiredAccuracy = kCLLocationAccuracyBest
         case .authorizedWhenInUse:
+            locationManager?.startUpdatingLocation()
             print("DEBUG: Auth when in use")
             locationManager?.requestAlwaysAuthorization()
         case .none:
@@ -504,16 +529,16 @@ extension HomeController: LocationInputViewDelegate {
 
 extension HomeController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return " "
-    }
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return " "
+//    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : searchResults.count
+        return section == 0 ? 0 : searchResults.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -561,7 +586,7 @@ extension HomeController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let annotation = annotation as? DriverAnnotation {
             let view = MKAnnotationView(annotation: annotation, reuseIdentifier: annotationIdentifier)
-            view.image = #imageLiteral(resourceName: "ic_lock_outline_white_2x")
+            view.image = #imageLiteral(resourceName: "chevron-sign-to-right")
             return view
         }
         return nil
